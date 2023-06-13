@@ -1,0 +1,38 @@
+- name: Сборочное окружение
+  hosts: 'build'
+  become: true
+
+  tasks:
+  - name: Установка default-jdk
+    apt:
+      name: 'default-jdk'
+      state: present
+
+  tasks:
+  - name: Установка maven
+    apt:
+      name: 'maven'
+      state: present
+
+  tasks:
+  - name: Установка git
+    apt:
+      name: 'git'
+      state: present
+
+  - name: Скачиваем проект из git-а
+    git:
+      repo: 'https://github.com/boxfuse/boxfuse-sample-java-war-hello.git'
+      dest: '/opt/app'
+
+  - name: Собираем проект
+    shell: mvn clean package
+    args:
+      chdir: '/opt/app'
+
+  - name: Берем war файл
+    fetch:
+      src: '/opt/app/target/hello-1.0.war'
+      dest: '/opt/app/hello-1.0.war'
+      flat: yes
+
