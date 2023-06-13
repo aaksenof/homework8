@@ -36,3 +36,23 @@
       dest: '/opt/app/hello-1.0.war'
       flat: yes
 
+- name: Прод окружение
+  hosts: 'prod'
+  become: true
+
+  tasks:
+
+  - name: Установка tomcat
+    apt:
+      name: 'tomcat9'
+      state: present
+
+  - name: Копирование war-файла
+    copy:
+      src: '/opt/app/target/hello-1.0.war'
+      dest: '/var/lib/tomcat9/webapps/hello-1.0.war'
+
+  - name: Запуск tomcat
+    service:
+      name: 'tomcat9'
+      state: started
