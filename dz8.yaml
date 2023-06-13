@@ -30,6 +30,12 @@
     args:
       chdir: '/opt/app'
 
+  - name: Получаем war-файл
+    fetch:
+      src: '/opt/app/target/hello-1.0.war'
+      dest: '/opt/app/hello-1.0.war'
+      flat: yes
+
 - name: Прод окружение
   hosts: 'prod'
   become: true
@@ -43,7 +49,7 @@
 
   - name: Копирование war-файла
     copy:
-      src: '/opt/app/target/hello-1.0.war'
+      src: '/opt/app/hello-1.0.war'
       dest: '/var/lib/tomcat9/webapps/hello-1.0.war'
 
   - name: Запуск tomcat
