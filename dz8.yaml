@@ -1,58 +1,57 @@
-- name: Сборочное окружение
+- name: build env
   hosts: 'build'
   become: true
 
   tasks:
-  - name: Установка default-jdk
+  - name: install default-jdk
     apt:
       name: 'default-jdk'
       state: present
 
-  tasks:
-  - name: Установка maven
+  - name: install maven
     apt:
       name: 'maven'
       state: present
 
-  tasks:
-  - name: Установка git
+  - name: install git
     apt:
       name: 'git'
       state: present
 
-  - name: Скачиваем проект из git-а
+  - name: download project from git-а
     git:
       repo: 'https://github.com/boxfuse/boxfuse-sample-java-war-hello.git'
       dest: '/opt/app'
 
-  - name: Собираем проект
+  - name: package проект
     shell: mvn clean package
     args:
       chdir: '/opt/app'
 
-  - name: Получаем war-файл
+  - name: get war-file
     fetch:
       src: '/opt/app/target/hello-1.0.war'
       dest: '/opt/app/hello-1.0.war'
       flat: yes
 
-- name: Прод окружение
+- name: PROD env
   hosts: 'prod'
   become: true
 
   tasks:
 
-  - name: Установка tomcat
+  - name: Install tomcat
     apt:
       name: 'tomcat9'
       state: present
 
-  - name: Копирование war-файла
-    copy:
-      src: '/opt/app/hello-1.0.war'
-      dest: '/var/lib/tomcat9/webapps/hello-1.0.war'
-
-  - name: Запуск tomcat
+  - name: Start tomcat
     service:
       name: 'tomcat9'
       state: started
+
+  - name: Copy war-file
+    synchronize:
+      src: '/opt/app/hello-1.0.war'
+      dest: '/var/lib/tomcat9/webapps/hello-1.0.war'
+    delegate_to: build
