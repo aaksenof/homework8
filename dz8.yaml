@@ -30,12 +30,6 @@
     args:
       chdir: '/opt/app'
 
-  - name: Берем war файл
-    fetch:
-      src: '/opt/app/target/hello-1.0.war'
-      dest: '/opt/app/hello-1.0.war'
-      flat: yes
-
 - name: Прод окружение
   hosts: 'prod'
   become: true
